@@ -127,6 +127,8 @@ def get_adj_s(adj):
     affifity_mat = generate_affinity(nz_indx_mat, nz_rand_mat, adj_n)
     adj_s = affifity_mat + adj_n
 
+    # prints the STEn converted matrix
+    print('STEN Converted....')
     print(adj_s)
     return adj_s
 
@@ -231,6 +233,7 @@ def loop(adj, topo_s):
 
         # fig_topo.show()
         # fig_reliab.show()
+        plt.grid('True')
         plt.show()
 
 

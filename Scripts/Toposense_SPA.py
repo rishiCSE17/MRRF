@@ -136,6 +136,7 @@ def plot_all_sp(g):
                          edge_color='r',
                          node_color='g'
                          )
+        plt.axis('off')
         plt_spa.plot()
 
         sp_list.append(sp_spa)
