@@ -39,7 +39,7 @@ def create_topo_with_weight(g, weighted_matrix):
                            'node_' + str(j + 1),
                            weight=val,
                            lenghth=val)
-                print(f'node_{i+1} , node_{j+1} : Added')
+                #print(f'node_{i+1} , node_{j+1} : Added')
                 '''print(f"g.add_edge('node_{i+1}' , "
                       f"'node_{j+1}', "
                       f"weight={round(val,3)})")'''
@@ -151,9 +151,12 @@ def get_median_sd(sampled_matrix):
     import statistics as stat
     median = []
     sd = []
+
     for node_history in sampled_matrix:
         median.append(stat.median(node_history))
         sd.append(stat.stdev(node_history))
+        print('mu :', median)
+        print('sd :', sd)
     return (median, sd)
 
 
