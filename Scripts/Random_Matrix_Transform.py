@@ -19,7 +19,7 @@ import random
 import time
 
 topo = nx.MultiDiGraph()
-
+regression_vector=[]
 
 def create_topo(graph, adj_matrix):
     for i in range(len(adj_matrix)):
@@ -179,6 +179,7 @@ def calculate_reliabiliy(sample_space, adj_s):
     edge_sample = get_edge_weight(adj_s)
     # print(edge_sample[0])
     r_vector = [0] * len(edge_sample[0])
+    t_series_edge = [[0]]* len(edge_sample[0])
 
     if len(sample_space) == 10:
         sample_space.pop(0)
@@ -197,14 +198,30 @@ def calculate_reliabiliy(sample_space, adj_s):
         sample_median, sample_sd = get_median_sd(sample_space)
         q_vector = get_Quality(sample_median, sample_sd, w1=0.4, w2=0.6)
         r_vector = get_Reliability(q_vector)
+        r_vector_rounded = [round(x,3) for x in r_vector] # rounding-off values of r_vec to 3 decimal pl.
+        #print(f'r_vector : {r_vector_rounded}')
+        t_series_edge = populate_time_series(r_vector_rounded, window=100)
 
-    return r_vector
+    return r_vector, t_series_edge
 
     # return None
+
+# polulate a time series from r_vector_rounded
+def populate_time_series(r_vector, window):
+    if len(regression_vector) > window:
+        regression_vector.pop(0)
+    regression_vector.append(r_vector)
+    return np.transpose(np.matrix(regression_vector)).tolist() #convers list time series
 
 
 def loop(adj, topo_s):
     weighted_sample_space = []
+
+    ts=16
+    fig_t_series = plt.figure('Time Series')
+    ax_ts_list = []
+    for i in range(ts):
+        ax_ts_list.append(fig_t_series.add_subplot(ts, 1, i + 1))
 
     while True:
         adj_s = get_adj_s(adj)
@@ -226,7 +243,7 @@ def loop(adj, topo_s):
         fig_reliab = plt.pause(2)
         fig_reliab = plt.clf()
 
-        r_vector = calculate_reliabiliy(weighted_sample_space, adj_s)
+        r_vector, t_series_edge = calculate_reliabiliy(weighted_sample_space, adj_s)
 
 
         plt.bar(np.arange(len(topo_s.edges)),
@@ -237,6 +254,22 @@ def loop(adj, topo_s):
         # fig_topo.show()
         # fig_reliab.show()
         plt.grid('True')
+
+        # plot for  time series
+
+        fig_t_series = plt.title('Tesries')
+
+
+        fig_t_series = plt.ion()
+        fig_t_series = plt.pause(2)
+        fig_t_series = plt.clf()
+
+        for i in range(len(t_series_edge)):
+            ax_ts_list[i].plot(np.arange(len(t_series_edge[i])),t_series_edge[i],'b:o',label=f'edge_{i}')
+            ax_ts_list[i].set_axis=False
+            ax_ts_list[i].grid(True)
+            #ax_ts_list[i].legend()
+
         plt.show()
 
 
